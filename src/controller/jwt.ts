@@ -3,6 +3,8 @@ import { Context } from '@midwayjs/koa';
 import { JwtService } from '@midwayjs/jwt';
 import { JwtPassportMiddleware } from '../middleware/jwt.middleware';
 import { User } from '../interface';
+import { verify } from 'hcaptcha';
+import * as fs from 'node:fs';
 
 @Controller('/auth')
 export class JwtController {
@@ -20,17 +22,31 @@ export class JwtController {
 
   @Post('/login')
   async authGenJwt(@Body() user: User) {
-    if (user.id === 1 && user.password === 'dddd') {
-      return {
-        t: await this.jwt.sign({ uid: user.id, msg: 'Hello Midway' }),
-        rt: await this.jwt.sign(
-          { uid: user.id, msg: 'Hello Midway' },
-          { expiresIn: '2d' }
-        ),
-      };
-    } else {
-      return { code: -1 };
-    }
+    const secret = fs.readFileSync('hsecret.key').toString();
+    const token = user.htoken;
+
+    return verify(secret, token)
+      .then(async data => {
+        if (data.success === true) {
+          console.log('success!', data);
+          if (user.id === 1 && user.password === 'dddd') {
+            console.log('login success');
+            return {
+              t: await this.jwt.sign({ uid: user.id, msg: 'Hello Midway' }),
+              rt: await this.jwt.sign(
+                { uid: user.id, msg: 'Hello Midway' },
+                { expiresIn: '2d' }
+              ),
+            };
+          } else {
+            return { code: -1 };
+          }
+        } else {
+          console.log('verification failed');
+          return { code: -1 };
+        }
+      })
+      .catch(console.error);
   }
 
   @Post('/loginrefresh')

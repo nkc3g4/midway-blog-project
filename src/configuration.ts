@@ -6,6 +6,7 @@ import { join } from 'path';
 import * as orm from '@midwayjs/orm';
 import * as jwt from '@midwayjs/jwt';
 import * as crossDomain from '@midwayjs/cross-domain';
+import * as oss from '@midwayjs/oss';
 
 // import { DefaultErrorFilter } from './filter/default.filter';
 // import { NotFoundFilter } from './filter/notfound.filter';
@@ -21,6 +22,7 @@ import { ReportMiddleware } from './middleware/report.middleware';
       component: info,
       enabledEnvironment: ['local'],
     },
+    oss,
   ],
   importConfigs: [join(__dirname, './config')],
 })

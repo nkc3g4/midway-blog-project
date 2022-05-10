@@ -7,4 +7,5 @@ export interface IUserOptions {
 export interface User {
   id: number;
   password: string;
+  htoken: string;
 }

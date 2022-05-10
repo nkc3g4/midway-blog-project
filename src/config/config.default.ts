@@ -1,4 +1,5 @@
 import { MidwayConfig } from '@midwayjs/core';
+import * as fs from 'node:fs';
 
 export default {
   // use for cookie sign key, should change to your own and keep security
@@ -16,15 +17,27 @@ export default {
     username: 'root',
     password: '123456',
     database: 'test',
-    synchronize: false, // 如果第一次使用，不存在表，有同步的需求可以写 true
+    synchronize: false,
     logging: false,
   },
   jwt: {
-    secret: 'xxxxxxxxxxxxxx', // fs.readFileSync('xxxxx.key')
-    expiresIn: '1m', // https://github.com/vercel/ms
+    secret: fs.readFileSync(__dirname + '\\jwtsecret.key').toString(),
+    expiresIn: '1d', // https://github.com/vercel/ms
   },
   cors: {
     credentials: false,
     origin: '*',
   },
-} as MidwayConfig;
+  oss: {
+    // normal oss bucket
+    client: {
+      accessKeyId: fs.readFileSync(__dirname + '\\accid.key').toString(),
+      accessKeySecret: fs
+        .readFileSync(__dirname + '\\accsecret.key')
+        .toString(),
+      bucket: 'luobotou-beijing',
+      endpoint: 'oss-cn-beijing.aliyuncs.com',
+      timeout: '60s',
+    },
+  },
+} as unknown as MidwayConfig;
