@@ -37,4 +37,21 @@ export class ArticleService {
     console.log(saveResult);
     return saveResult;
   }
+
+  async queryArticle(query: string, page: number) {
+    const take = 10;
+    const skip = take * (page - 1);
+    console.log(skip);
+    const [result, total] = await this.articleModel
+      .createQueryBuilder()
+      .select()
+      .where(
+        `MATCH(title,plaincontent) AGAINST('${query}' IN NATURAL LANGUAGE MODE) LIMIT ${skip},${take}`
+      )
+      .getManyAndCount();
+    return {
+      data: result,
+      count: total,
+    };
+  }
 }

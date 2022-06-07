@@ -22,7 +22,7 @@ export class JwtController {
 
   @Post('/login')
   async authGenJwt(@Body() user: User) {
-    const secret = fs.readFileSync('hsecret.key').toString();
+    const secret = fs.readFileSync(__dirname + '\\hsecret.key').toString();
     const token = user.htoken;
 
     return verify(secret, token)

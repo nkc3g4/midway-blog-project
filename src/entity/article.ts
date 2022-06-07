@@ -13,5 +13,11 @@ export class Article {
   content: string;
 
   @Column()
+  plaincontent: string;
+
+  @Column()
   userid: number;
+
+  @Column({ default: new Date() })
+  createtime: Date;
 }

@@ -26,6 +26,10 @@ export class APIController {
   @Post('/new', { middleware: [JwtPassportMiddleware] })
   async postArticle(@Body() article: Article) {
     console.log('jwt user: ', this.ctx.state.user);
+    article.createtime = new Date();
+    const stripTagsRE = /<\/?[^>]+>/gi;
+    article.plaincontent = String(article.content).replace(stripTagsRE, '');
+
     const data = await this.articleService.postNewArticle(article);
     return data;
   }
@@ -44,5 +48,15 @@ export class APIController {
     const data = await this.articleService.getArticleList(page, perPage);
 
     return data;
+  }
+
+  @Get('/search/:query/:page')
+  async getQueryList(
+    @Param('query') query: string,
+    @Param('page') page: number
+  ) {
+    console.log(query);
+    console.log(page);
+    return await this.articleService.queryArticle(query, page);
   }
 }
